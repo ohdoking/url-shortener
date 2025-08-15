@@ -23,6 +23,16 @@ Plan for implementing basic functionality URL shortener.
 
 url shortener service - postgresql db(read heavy)
 
+## Design Database Table
+
+### Table Name : shorten_url
+#### Columns
+id: UUID(unique, not_nullable)
+alias: String(unique, not_nullable)
+original_url: String(not_nullable)
+created_at: Datetime(not_nullable)
+updated_at: Datetime(not_nullable)
+
 ## Design API
 
 - Shorten URL
