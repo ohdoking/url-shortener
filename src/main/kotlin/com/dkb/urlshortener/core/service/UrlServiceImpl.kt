@@ -6,13 +6,15 @@ import com.dkb.urlshortener.core.repository.ShortenUrlRepository
 import com.dkb.urlshortener.util.BaseEncoder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service
 
 
 @Service
 class UrlServiceImpl(
     private val repository: ShortenUrlRepository,
-    private val baseEncoder: BaseEncoder
+    private val baseEncoder: BaseEncoder,
+    private val cacheManager: CacheManager
 ) : UrlService {
 
     private val logger: Logger = LoggerFactory.getLogger(UrlServiceImpl::class.java)
@@ -35,14 +37,16 @@ class UrlServiceImpl(
     }
 
     override fun getOriginalUrlByAlias(alias: String): ShortenUrlDao {
-        val dao = repository.findByAlias(alias)
-        return if (dao != null) {
-            logger.info("Retrieved original URL for alias {}: {}", alias, dao.originalUrl)
-            dao
-        } else {
-            logger.warn("Alias not found: {}", alias)
-            throw AliasNotFoundException(alias)
+
+        cacheManager.getCache("urlCache")?.get(alias, ShortenUrlDao::class.java)?.let {
+            logger.info("Cache hit for alias: {}", alias)
+            return it
         }
+
+        val dao = repository.findByAlias(alias) ?: throw AliasNotFoundException(alias)
+        logger.info("Cache miss for alias: {}", alias)
+        cacheManager.getCache("urlCache")?.put(alias, dao)
+        return dao
     }
 }
 

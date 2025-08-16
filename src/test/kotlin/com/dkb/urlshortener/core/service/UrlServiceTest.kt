@@ -10,20 +10,30 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.springframework.cache.Cache
+import org.springframework.cache.CacheManager
 
 class UrlServiceImplTest {
 
     private lateinit var repository: ShortenUrlRepository
     private lateinit var baseEncoder: BaseEncoder
     private lateinit var urlService: UrlServiceImpl
+    private lateinit var cacheManager: CacheManager
+    private lateinit var cache: Cache
 
     @BeforeEach
     fun setUp() {
         repository = mock()
         baseEncoder = mock()
-        urlService = UrlServiceImpl(repository, baseEncoder)
+        cache = mock()
+        cacheManager = mock {
+            on { getCache("urlCache") } doReturn cache
+        }
+        urlService = UrlServiceImpl(repository, baseEncoder, cacheManager)
     }
 
     @Nested
@@ -83,6 +93,20 @@ class UrlServiceImplTest {
         fun givenAlias_whenGetOriginalUrlByAlias_thenReturnDao() {
             val dao = ShortenUrlDao(alias = "abc123", originalUrl = "https://dkb.com")
             whenever(repository.findByAlias("abc123")).thenReturn(dao)
+            whenever(cache.get("abc123", ShortenUrlDao::class.java)).thenReturn(null)
+
+            val result = urlService.getOriginalUrlByAlias("abc123")
+
+            assertThat(result).isEqualTo(dao)
+            verify(cache).put("abc123", dao)
+        }
+
+        @Test
+        @DisplayName("Given an alias exists in cache When getOriginalUrlByAlias Then should return the corresponding DAO")
+        fun givenAliasInCache_whenGetOriginalUrlByAlias_thenReturnDao() {
+            val dao = ShortenUrlDao(alias = "abc123", originalUrl = "https://dkb.com")
+            whenever(repository.findByAlias("abc123")).thenReturn(dao)
+            whenever(cache.get("abc123", ShortenUrlDao::class.java)).thenReturn(dao)
 
             val result = urlService.getOriginalUrlByAlias("abc123")
 
@@ -93,6 +117,7 @@ class UrlServiceImplTest {
         @DisplayName("Given a non-existent alias When getOriginalUrlByAlias Then should throw AliasNotFoundException")
         fun givenNonExistentAlias_whenGetOriginalUrlByAlias_thenThrowNotFound() {
             whenever(repository.findByAlias("unknown")).thenReturn(null)
+            whenever(cache.get("unknown", ShortenUrlDao::class.java)).thenReturn(null)
 
             val exception = org.junit.jupiter.api.assertThrows<AliasNotFoundException> {
                 urlService.getOriginalUrlByAlias("unknown")

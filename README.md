@@ -13,6 +13,7 @@ The backend is built with Kotlin and Spring Boot, following Hexagonal Architectu
 - **Architecture:** Hexagonal Architecture
 - **API Documentation:** Springdoc OpenAPI (Swagger UI)
 - **Database:** PostgreSQL
+- **Cache:** Inmemory cache(potentially redis)
 - **Containerization:** Docker, Docker Compose
 
 ## How to Run Locally
