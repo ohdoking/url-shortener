@@ -4,5 +4,5 @@ import com.dkb.urlshortener.core.model.ShortenUrlDao
 
 interface UrlService {
     fun createShortenUrl(originalUrl: String): ShortenUrlDao
-    fun getOriginalUrlByAlias(alias: String): ShortenUrlDao?
+    fun getOriginalUrlByAlias(alias: String): ShortenUrlDao
 }
