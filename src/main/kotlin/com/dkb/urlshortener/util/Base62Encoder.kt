@@ -15,10 +15,12 @@ class Base62Encoder : BaseEncoder {
 
     private val ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
     private val BASE = BigInteger.valueOf(ALPHABET.length.toLong())
+    private val SHORT_URL_LENGTH = 7
 
     override fun encode(characters: String): String {
-        val number = BigInteger(characters.toByteArray())
-        if (number == BigInteger.ZERO) return ALPHABET[0].toString()
+        val number = BigInteger(characters.toByteArray()).abs()
+
+        if (number == BigInteger.ZERO) return ALPHABET[0].toString().repeat(SHORT_URL_LENGTH)
 
         val sb = StringBuilder()
         var n = number
@@ -27,16 +29,8 @@ class Base62Encoder : BaseEncoder {
             sb.append(ALPHABET[remainder])
             n = n.divide(BASE)
         }
-        return sb.reverse().toString()
-    }
 
-    override fun decode(characters: String): String {
-        var num = BigInteger.ZERO
-        for (ch in characters) {
-            val index = ALPHABET.indexOf(ch)
-            if (index == -1) throw IllegalArgumentException("Invalid Base62 character: $ch")
-            num = num.multiply(BASE).add(BigInteger.valueOf(index.toLong()))
-        }
-        return String(num.toByteArray())
+        val base62 = sb.reverse().toString()
+        return if (base62.length <= SHORT_URL_LENGTH) base62 else base62.takeLast(SHORT_URL_LENGTH)
     }
 }
