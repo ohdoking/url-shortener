@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/urls")
+@RequestMapping("/api/v1/urls")
 class UrlApiController(
     private val urlService: UrlService
 ) {

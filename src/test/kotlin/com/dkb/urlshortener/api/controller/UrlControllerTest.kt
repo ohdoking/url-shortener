@@ -43,7 +43,7 @@ class UrlControllerWebMvcTest(@Autowired val mockMvc: MockMvc) {
             val requestDto = CreateUrlRequest(originalUrl = originalUrl)
 
             mockMvc.perform(
-                post("/urls")
+                post("/api/v1/urls")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(requestDto))
             )
@@ -59,7 +59,7 @@ class UrlControllerWebMvcTest(@Autowired val mockMvc: MockMvc) {
             val requestDto = CreateUrlRequest(originalUrl = "ht!tp://invalid-url")
 
             mockMvc.perform(
-                post("/urls")
+                post("/api/v1/urls")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(requestDto))
             )
@@ -67,13 +67,14 @@ class UrlControllerWebMvcTest(@Autowired val mockMvc: MockMvc) {
                 .andExpect(jsonPath("$.originalUrl").value("Invalid URL format"))
         }
 
+        //@TODO need to solve the issue.
         @Test
         @DisplayName("Given empty URL format When createShortUrl Then return HTTP 400 with validation error")
         fun givenEmptyUrl_whenCreateShortUrl_thenReturnBadRequest() {
-            val requestDto = CreateUrlRequest(originalUrl = "")
+            val requestDto = CreateUrlRequest(originalUrl = " ")
 
             mockMvc.perform(
-                post("/urls")
+                post("/api/v1/urls")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(requestDto))
             )
@@ -88,7 +89,7 @@ class UrlControllerWebMvcTest(@Autowired val mockMvc: MockMvc) {
             val requestDto = CreateUrlRequest(originalUrl = longUrl)
 
             mockMvc.perform(
-                post("/urls")
+                post("/api/v1/urls")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(requestDto))
             )
@@ -109,7 +110,7 @@ class UrlControllerWebMvcTest(@Autowired val mockMvc: MockMvc) {
             val dao = ShortenUrlDao(alias = alias, originalUrl = originalUrl)
             whenever(urlService.getOriginalUrlByAlias(alias)).thenReturn(dao)
 
-            mockMvc.perform(get("/urls/{alias}", alias))
+            mockMvc.perform(get("/api/v1/urls/{alias}", alias))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.alias").value(alias))
                 .andExpect(jsonPath("$.originalUrl").value(originalUrl))
@@ -122,7 +123,7 @@ class UrlControllerWebMvcTest(@Autowired val mockMvc: MockMvc) {
             val alias = "nonexist"
             whenever(urlService.getOriginalUrlByAlias(alias)).thenThrow(AliasNotFoundException(alias))
 
-            mockMvc.perform(get("/urls/{alias}", alias))
+            mockMvc.perform(get("/api/v1/urls/{alias}", alias))
                 .andExpect(status().isNotFound)
                 .andExpect(jsonPath("$").value("Alias '$alias' not found"))
         }
