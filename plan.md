@@ -21,7 +21,7 @@ Plan for implementing basic functionality URL shortener.
 
 ## Design Architecture
 
-url shortener service - postgresql db(read heavy)
+url shortener service - postgresql db(read heavy) - redis/In-memory DB(cache)
 
 ## Design Database Table
 
