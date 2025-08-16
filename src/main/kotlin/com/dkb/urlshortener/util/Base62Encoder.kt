@@ -4,6 +4,12 @@ import org.springframework.stereotype.Component
 
 import java.math.BigInteger
 
+/**
+ * Base62 encoder and decoder implementation.
+ *
+ * Implementation is based on the reference from:
+ * https://mojoauth.com/binary-encoding-decoding/base62-with-kotlin/
+ */
 @Component
 class Base62Encoder : BaseEncoder {
 
