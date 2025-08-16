@@ -1,4 +1,4 @@
-package com.dkb.urlshortener.api.controller
+package com.dkb.urlshortener.common.exception
 
 import com.dkb.urlshortener.core.exception.AliasNotFoundException
 import org.springframework.http.HttpStatus
@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
-
 
 @RestControllerAdvice
 class GlobalExceptionHandler {

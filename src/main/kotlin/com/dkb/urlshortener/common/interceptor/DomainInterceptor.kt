@@ -1,4 +1,4 @@
-package com.dkb.urlshortener.interceptor
+package com.dkb.urlshortener.common.interceptor
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

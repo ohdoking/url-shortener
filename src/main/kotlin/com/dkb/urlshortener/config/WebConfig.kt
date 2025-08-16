@@ -1,6 +1,6 @@
 package com.dkb.urlshortener.config
 
-import com.dkb.urlshortener.interceptor.DomainInterceptor
+import com.dkb.urlshortener.common.interceptor.DomainInterceptor
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
