@@ -26,6 +26,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     // Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
